@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
-import { useCartStore, CartItem } from '../store/cartStore';
+import { useCartStore } from '../store/cartStore';
 
 const MenuPage = () => {
   const [searchParams] = useSearchParams();
@@ -22,7 +22,7 @@ const MenuPage = () => {
 
   const handleAddToCart = (product: typeof products[0]) => {
     setLoadingId(product.id);
-    addToCart(product as any);
+    addToCart({ ...product, quantity: 1 });
     setTimeout(() => setLoadingId(null), 500);
   };
 

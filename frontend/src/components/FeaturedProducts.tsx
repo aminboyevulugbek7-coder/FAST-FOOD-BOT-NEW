@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useCartStore, CartItem } from '../store/cartStore';
+import { useCartStore } from '../store/cartStore';
 import ProductCard from './ProductCard';
 
 const FeaturedProducts = () => {
@@ -35,7 +35,7 @@ const FeaturedProducts = () => {
 
   const handleAddToCart = (product: typeof products[0]) => {
     setLoading(true);
-    addToCart(product as CartItem);
+    addToCart({ ...product, quantity: 1 });
     setTimeout(() => setLoading(false), 500);
   };
 

@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCartStore } from '../store/cartStore';
 import Header from '../components/Header';
 import CategoryCard from '../components/CategoryCard';
 import FeaturedProducts from '../components/FeaturedProducts';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { cartItems } = useCartStore();
   const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
