@@ -27,18 +27,36 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 pb-24">
       <Header title={greeting} showCart={true} />
       
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white p-6 rounded-b-3xl shadow-lg">
-        <h2 className="text-2xl font-bold mb-2">Tezkor yetkazib berish 🚀</h2>
-        <p className="opacity-90">Eng mazali fast food 30 daqiqada!</p>
+      {/* Hero Section - Professional */}
+      <div className="relative bg-gradient-to-br from-red-500 via-orange-500 to-yellow-500 text-white p-8 rounded-b-[2.5rem] shadow-2xl overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
+        <div className="relative z-10">
+          <h2 className="text-3xl font-extrabold mb-3 drop-shadow-lg">Tezkor yetkazib berish 🚀</h2>
+          <p className="text-lg opacity-95 font-medium">Eng mazali fast food 30 daqiqada eshigingizda!</p>
+          <div className="mt-4 flex items-center gap-4">
+            <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+              <span className="text-sm font-semibold">⚡ Tez</span>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+              <span className="text-sm font-semibold">🎯 Sifatli</span>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+              <span className="text-sm font-semibold">💰 Arzon</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Categories */}
-      <div className="p-4">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Kategoriyalar</h3>
+      {/* Categories - Professional */}
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-2xl font-bold text-gray-800">Kategoriyalar</h3>
+          <span className="text-sm text-gray-500 font-medium">Tanlang 👇</span>
+        </div>
         <div className="grid grid-cols-2 gap-4">
           {categories.map((category) => (
             <CategoryCard key={category.id} {...category} />
@@ -49,13 +67,15 @@ const HomePage = () => {
       {/* Featured Products */}
       <FeaturedProducts />
 
-      {/* CTA Button */}
-      <div className="fixed bottom-4 left-4 right-4">
+      {/* CTA Button - Professional */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent">
         <button
           onClick={() => navigate('/menu')}
-          className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+          className="w-full bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 text-white py-5 rounded-2xl font-bold text-xl shadow-2xl hover:shadow-3xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3"
         >
-          Buyurtma berish
+          <span className="text-2xl">🍔</span>
+          <span>Buyurtma berish</span>
+          <span className="text-2xl">🚀</span>
         </button>
       </div>
     </div>
