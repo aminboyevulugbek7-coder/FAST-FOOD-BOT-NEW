@@ -27,61 +27,49 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white pb-28">
+    <div className="min-h-screen bg-white pb-32">
       <Header title={greeting} showCart={true} />
       
-      {/* Hero Section - Minimalist */}
-      <div className="px-6 pt-8 pb-12">
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-3">
-          Tezkor yetkazib berish
+      {/* Hero Section - Ultra Clean */}
+      <div className="px-6 pt-10 pb-8">
+        <h1 className="text-[2.75rem] font-extrabold text-gray-900 leading-tight mb-4 tracking-tight">
+          Tezkor yetkazib<br />berish
         </h1>
-        <p className="text-lg text-gray-600 mb-6">
+        <p className="text-lg text-gray-600 leading-relaxed max-w-md">
           Eng mazali fast food 30 daqiqada eshigingizda
         </p>
-        
-        {/* Stats - Clean */}
-        <div className="flex items-center gap-6 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-gray-700 font-medium">Tez yetkazish</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-            <span className="text-gray-700 font-medium">Sifatli ovqat</span>
-          </div>
-        </div>
       </div>
 
-      {/* Categories - Minimalist Grid */}
-      <div className="px-6 mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Kategoriyalar</h2>
-        <div className="grid grid-cols-2 gap-4">
+      {/* Categories - Material Design 3 */}
+      <div className="px-6 mb-10">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight">Kategoriyalar</h2>
+        <div className="grid grid-cols-2 gap-5">
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => navigate(category.path)}
-              className="bg-gray-50 hover:bg-gray-100 active:bg-gray-200 rounded-3xl p-8 transition-all duration-200 border border-gray-100 hover:border-orange-200 group"
+              className="bg-[#FAFAFA] hover:bg-[#F5F5F5] active:bg-[#EEEEEE] rounded-[24px] p-7 transition-all duration-200 shadow-sm hover:shadow-md group"
             >
-              <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-200">
+              <div className="text-6xl mb-4 transform group-hover:scale-105 transition-transform duration-200">
                 {category.icon}
               </div>
-              <h3 className="font-semibold text-gray-900 text-lg">{category.name}</h3>
+              <h3 className="font-semibold text-gray-900 text-base tracking-tight">{category.name}</h3>
             </button>
           ))}
         </div>
       </div>
 
       {/* Featured Products - Clean */}
-      <div className="px-6 mb-24">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Ommabop</h2>
+      <div className="px-6 mb-28">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight">Ommabop</h2>
         <FeaturedProducts />
       </div>
 
-      {/* CTA Button - Minimalist */}
-      <div className="fixed bottom-0 left-0 right-0 p-6 bg-white border-t border-gray-100">
+      {/* CTA Button - Material Design 3 */}
+      <div className="fixed bottom-0 left-0 right-0 px-6 py-6 bg-white/95 backdrop-blur-sm border-t border-gray-100">
         <button
           onClick={() => navigate('/menu')}
-          className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white py-5 rounded-2xl font-bold text-lg transition-colors duration-200 shadow-lg shadow-orange-500/20"
+          className="w-full bg-[#FF6B35] hover:bg-[#FF5722] active:bg-[#E64A19] text-white py-5 rounded-[20px] font-bold text-lg transition-all duration-200 shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30"
         >
           Buyurtma berish
         </button>
