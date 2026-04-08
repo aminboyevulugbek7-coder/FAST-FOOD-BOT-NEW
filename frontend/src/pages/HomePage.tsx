@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import CategoryCard from '../components/CategoryCard';
 import FeaturedProducts from '../components/FeaturedProducts';
 
 const HomePage = () => {
@@ -20,10 +19,30 @@ const HomePage = () => {
   }, []);
 
   const categories = [
-    { id: 1, name: 'Burgerlar', icon: '🍔', color: 'from-orange-400 to-red-500', path: '/menu?category=burgers' },
-    { id: 2, name: 'Pitsa', icon: '🍕', color: 'from-yellow-400 to-orange-500', path: '/menu?category=pizza' },
-    { id: 3, name: 'Ichimliklar', icon: '🥤', color: 'from-blue-400 to-cyan-500', path: '/menu?category=drinks' },
-    { id: 4, name: 'Shirinliklar', icon: '🍦', color: 'from-pink-400 to-purple-500', path: '/menu?category=desserts' },
+    { 
+      id: 1, 
+      name: 'Burgerlar', 
+      image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=400&fit=crop',
+      path: '/menu?category=burgers' 
+    },
+    { 
+      id: 2, 
+      name: 'Pitsa', 
+      image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=400&fit=crop',
+      path: '/menu?category=pizza' 
+    },
+    { 
+      id: 3, 
+      name: 'Ichimliklar', 
+      image: 'https://images.unsplash.com/photo-1546173159-315724a31696?w=400&h=400&fit=crop',
+      path: '/menu?category=drinks' 
+    },
+    { 
+      id: 4, 
+      name: 'Shirinliklar', 
+      image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=400&fit=crop',
+      path: '/menu?category=desserts' 
+    },
   ];
 
   return (
@@ -40,7 +59,7 @@ const HomePage = () => {
         </p>
       </div>
 
-      {/* Categories - Material Design 3 */}
+      {/* Categories - Material Design 3 with Photorealistic Images */}
       <div className="px-6 mb-10">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight">Kategoriyalar</h2>
         <div className="grid grid-cols-2 gap-5">
@@ -48,12 +67,24 @@ const HomePage = () => {
             <button
               key={category.id}
               onClick={() => navigate(category.path)}
-              className="bg-[#FAFAFA] hover:bg-[#F5F5F5] active:bg-[#EEEEEE] rounded-[24px] p-7 transition-all duration-200 shadow-sm hover:shadow-md group"
+              className="relative bg-white rounded-[24px] overflow-hidden transition-all duration-300 shadow-md hover:shadow-xl group border border-gray-100 hover:border-[#FF6B35]/20"
             >
-              <div className="text-6xl mb-4 transform group-hover:scale-105 transition-transform duration-200">
-                {category.icon}
+              {/* Image Background with Overlay */}
+              <div className="relative h-40 overflow-hidden">
+                <img 
+                  src={category.image} 
+                  alt={category.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
               </div>
-              <h3 className="font-semibold text-gray-900 text-base tracking-tight">{category.name}</h3>
+              
+              {/* Category Name */}
+              <div className="absolute bottom-0 left-0 right-0 p-5">
+                <h3 className="font-bold text-white text-lg tracking-tight drop-shadow-lg">
+                  {category.name}
+                </h3>
+              </div>
             </button>
           ))}
         </div>
