@@ -40,18 +40,15 @@ const FeaturedProducts = () => {
   };
 
   return (
-    <div className="p-4">
-      <h3 className="text-xl font-bold text-gray-800 mb-4">Ommabop Mahsulotlar</h3>
-      <div className="space-y-4">
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            {...product}
-            onAddToCart={() => handleAddToCart(product)}
-            loading={loading}
-          />
-        ))}
-      </div>
+    <div className="space-y-4">
+      {products.map((product) => (
+        <ProductCard
+          key={product.id}
+          {...product}
+          onAddToCart={() => handleAddToCart(product)}
+          loading={loading}
+        />
+      ))}
     </div>
   );
 };

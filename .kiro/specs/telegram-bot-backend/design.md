@@ -777,3 +777,155 @@ graph TD
     NotifyUser --> ShowPending
 ```
 
+
+## Middleware and Exception Filter Design
+
+### Middleware Chain
+
+```typescript
+// Session Middleware
+@Injectable()
+export class SessionMiddleware implements NestMiddleware {
+  use(ctx: Context, next: () => Promise<void>) {
+    // Initialize session for user
+    if (!ctx.session) {
+      ctx.session = {
+        userId: null,
+        cartId: null,
+        currentScene: null,
+      }
+    }
+    return next()
+  }
+}
+
+// Authentication Middleware
+@Injectable()
+export class AuthMiddleware implements NestMiddleware {
+  constructor(private readonly usersService: UsersService) {}
+
+  async use(ctx: Context, next: () => Promise<void>) {
+    const telegramId = ctx.from?.id
+    if (telegramId) {
+      const user = await this.usersService.findUserByTelegramId(telegramId)
+      ctx.session.user = user
+    }
+    return next()
+  }
+}
+
+// Rate Limit Middleware
+@Injectable()
+export class RateLimitMiddleware implements NestMiddleware {
+  private requests: Map<number, number[]> = new Map()
+  private readonly limit = 10 // 10 requests
+  private readonly window = 60000 // per minute
+
+  use(ctx: Context, next: () => Promise<void>) {
+    const userId = ctx.from?.id
+    if (!userId) return next()
+
+    const now = Date.now()
+    const userRequests = this.requests.get(userId) || []
+    
+    // Remove old requests outside window
+    const recentRequests = userRequests.filter(time => now - time < this.window)
+    
+    if (recentRequests.length >= this.limit) {
+      ctx.reply('Juda ko\'p so\'rov yuborildi. Iltimos, biroz kuting.')
+      return
+    }
+    
+    recentRequests.push(now)
+    this.requests.set(userId, recentRequests)
+    
+    return next()
+  }
+}
+```
+
+### Exception Filters
+
+```typescript
+// Bot Exception Filter
+@Catch()
+export class BotExceptionFilter implements ExceptionFilter {
+  constructor(private readonly logger: Logger) {}
+
+  catch(exception: any, host: ArgumentsHost) {
+    const ctx = host.switchToHttp().getResponse<Context>()
+    
+    this.logger.error('Bot exception occurred', {
+      error: exception.message,
+      stack: exception.stack,
+      userId: ctx.from?.id,
+      chatId: ctx.chat?.id,
+    })
+
+    // User-friendly error message
+    const message = this.getUserFriendlyMessage(exception)
+    ctx.reply(message)
+  }
+
+  private getUserFriendlyMessage(exception: any): string {
+    if (exception instanceof ValidationException) {
+      return 'Kiritilgan ma\'lumotlar noto\'g\'ri. Iltimos, qaytadan urinib ko\'ring.'
+    }
+    if (exception instanceof NotFoundException) {
+      return 'Kechirasiz, ma\'lumot topilmadi.'
+    }
+    if (exception instanceof UnauthorizedException) {
+      return 'Sizda bu amalni bajarish uchun ruxsat yo\'q.'
+    }
+    return 'Xatolik yuz berdi. Iltimos, keyinroq urinib ko\'ring.'
+  }
+}
+
+// Firebase Exception Filter
+@Catch(FirebaseError)
+export class FirebaseExceptionFilter implements ExceptionFilter {
+  constructor(private readonly logger: Logger) {}
+
+  catch(exception: FirebaseError, host: ArgumentsHost) {
+    const ctx = host.switchToHttp().getResponse<Context>()
+    
+    this.logger.error('Firebase exception occurred', {
+      code: exception.code,
+      message: exception.message,
+      userId: ctx.from?.id,
+    })
+
+    ctx.reply('Ma\'lumotlar bazasi bilan bog\'lanishda xatolik yuz berdi.')
+  }
+}
+```
+
+### Guards
+
+```typescript
+// Admin Guard
+@Injectable()
+export class AdminGuard implements CanActivate {
+  constructor(private readonly usersService: UsersService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const ctx = context.switchToHttp().getRequest<Context>()
+    const telegramId = ctx.from?.id
+
+    if (!telegramId) {
+      return false
+    }
+
+    const isAdmin = await this.usersService.isAdmin(telegramId)
+    
+    if (!isAdmin) {
+      await ctx.reply('Sizda admin huquqlari yo\'q.')
+    }
+
+    return isAdmin
+  }
+}
+
+// Rate Limit Guard
+@Injectable()
+export class RateLimitGuard implements Can

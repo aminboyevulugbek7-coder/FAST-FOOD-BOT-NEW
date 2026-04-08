@@ -18,49 +18,40 @@ const ProductCard = ({
   loading = false 
 }: ProductCardProps) => {
   return (
-    <div className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 group">
-      <div className="flex">
-        {/* Image with overlay */}
-        <div className="relative w-36 h-36 overflow-hidden">
+    <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden hover:border-orange-200 hover:shadow-lg transition-all duration-200 group">
+      <div className="flex gap-4 p-4">
+        {/* Image - Clean */}
+        <div className="relative w-28 h-28 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-50">
           <img 
             src={image} 
             alt={name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
         </div>
         
-        {/* Content */}
-        <div className="flex-1 p-5 flex flex-col justify-between">
+        {/* Content - Minimalist */}
+        <div className="flex-1 flex flex-col justify-between min-w-0">
           <div>
-            <h3 className="font-bold text-gray-900 text-lg mb-1.5 line-clamp-1">{name}</h3>
+            <h3 className="font-bold text-gray-900 text-base mb-1 line-clamp-1">{name}</h3>
             {description && (
-              <p className="text-sm text-gray-600 mb-2 line-clamp-2">{description}</p>
+              <p className="text-sm text-gray-500 mb-2 line-clamp-2">{description}</p>
             )}
           </div>
           
           <div className="flex items-center justify-between gap-3">
-            <div className="flex flex-col">
-              <span className="text-xs text-gray-500 font-medium">Narxi</span>
-              <span className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500">
+            <div>
+              <span className="text-xl font-bold text-gray-900">
                 {price.toLocaleString()}
               </span>
-              <span className="text-xs text-gray-500 font-medium">so'm</span>
+              <span className="text-sm text-gray-500 ml-1">so'm</span>
             </div>
             
             <button
               onClick={onAddToCart}
               disabled={loading}
-              className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-2xl font-bold text-sm hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
-              {loading ? (
-                <span className="animate-spin">⏳</span>
-              ) : (
-                <>
-                  <span>🛒</span>
-                  <span>Qo'shish</span>
-                </>
-              )}
+              {loading ? '...' : "+ Qo'shish"}
             </button>
           </div>
         </div>

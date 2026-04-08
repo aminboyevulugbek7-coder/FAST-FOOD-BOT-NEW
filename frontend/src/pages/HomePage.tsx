@@ -27,55 +27,63 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 pb-24">
+    <div className="min-h-screen bg-white pb-28">
       <Header title={greeting} showCart={true} />
       
-      {/* Hero Section - Professional */}
-      <div className="relative bg-gradient-to-br from-red-500 via-orange-500 to-yellow-500 text-white p-8 rounded-b-[2.5rem] shadow-2xl overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
-        <div className="relative z-10">
-          <h2 className="text-3xl font-extrabold mb-3 drop-shadow-lg">Tezkor yetkazib berish 🚀</h2>
-          <p className="text-lg opacity-95 font-medium">Eng mazali fast food 30 daqiqada eshigingizda!</p>
-          <div className="mt-4 flex items-center gap-4">
-            <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-              <span className="text-sm font-semibold">⚡ Tez</span>
-            </div>
-            <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-              <span className="text-sm font-semibold">🎯 Sifatli</span>
-            </div>
-            <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-              <span className="text-sm font-semibold">💰 Arzon</span>
-            </div>
+      {/* Hero Section - Minimalist */}
+      <div className="px-6 pt-8 pb-12">
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-3">
+          Tezkor yetkazib berish
+        </h1>
+        <p className="text-lg text-gray-600 mb-6">
+          Eng mazali fast food 30 daqiqada eshigingizda
+        </p>
+        
+        {/* Stats - Clean */}
+        <div className="flex items-center gap-6 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="text-gray-700 font-medium">Tez yetkazish</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+            <span className="text-gray-700 font-medium">Sifatli ovqat</span>
           </div>
         </div>
       </div>
 
-      {/* Categories - Professional */}
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-5">
-          <h3 className="text-2xl font-bold text-gray-800">Kategoriyalar</h3>
-          <span className="text-sm text-gray-500 font-medium">Tanlang 👇</span>
-        </div>
+      {/* Categories - Minimalist Grid */}
+      <div className="px-6 mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Kategoriyalar</h2>
         <div className="grid grid-cols-2 gap-4">
           {categories.map((category) => (
-            <CategoryCard key={category.id} {...category} />
+            <button
+              key={category.id}
+              onClick={() => navigate(category.path)}
+              className="bg-gray-50 hover:bg-gray-100 active:bg-gray-200 rounded-3xl p-8 transition-all duration-200 border border-gray-100 hover:border-orange-200 group"
+            >
+              <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-200">
+                {category.icon}
+              </div>
+              <h3 className="font-semibold text-gray-900 text-lg">{category.name}</h3>
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Featured Products */}
-      <FeaturedProducts />
+      {/* Featured Products - Clean */}
+      <div className="px-6 mb-24">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Ommabop</h2>
+        <FeaturedProducts />
+      </div>
 
-      {/* CTA Button - Professional */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent">
+      {/* CTA Button - Minimalist */}
+      <div className="fixed bottom-0 left-0 right-0 p-6 bg-white border-t border-gray-100">
         <button
           onClick={() => navigate('/menu')}
-          className="w-full bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 text-white py-5 rounded-2xl font-bold text-xl shadow-2xl hover:shadow-3xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3"
+          className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white py-5 rounded-2xl font-bold text-lg transition-colors duration-200 shadow-lg shadow-orange-500/20"
         >
-          <span className="text-2xl">🍔</span>
-          <span>Buyurtma berish</span>
-          <span className="text-2xl">🚀</span>
+          Buyurtma berish
         </button>
       </div>
     </div>
