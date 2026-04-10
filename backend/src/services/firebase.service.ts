@@ -26,6 +26,7 @@ export class FirebaseService {
           clientEmail: firebaseConfig.clientEmail!,
         }),
         databaseURL: firebaseConfig.databaseURL,
+        storageBucket: firebaseConfig.storageBucket,
       });
 
       this.db = admin.database();

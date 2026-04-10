@@ -5,7 +5,7 @@ import { useAuthStore } from '../store/authStore';
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -14,12 +14,12 @@ const LoginPage = () => {
     setError('');
     setLoading(true);
 
-    const success = await login(credentials.username, credentials.password);
+    const success = await login(credentials.email, credentials.password);
     
     if (success) {
       navigate('/dashboard');
     } else {
-      setError('Login yoki parol noto\'g\'ri');
+      setError('Invalid email or password');
     }
     
     setLoading(false);
@@ -43,21 +43,21 @@ const LoginPage = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Login
+              Email
             </label>
             <input
-              type="text"
-              value={credentials.username}
-              onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+              type="email"
+              value={credentials.email}
+              onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
               className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
-              placeholder="admin"
+              placeholder="admin@fastfood.com"
               required
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Parol
+              Password
             </label>
             <input
               type="password"
@@ -74,14 +74,14 @@ const LoginPage = () => {
             disabled={loading}
             className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transform hover:scale-105 transition-all disabled:opacity-50"
           >
-            {loading ? 'Kirilmoqda...' : 'Kirish'}
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
         <div className="mt-6 p-4 bg-blue-50 rounded-xl">
           <p className="text-sm text-gray-600">
-            <strong>Demo credentials:</strong><br/>
-            Login: <code className="bg-white px-2 py-1 rounded">admin</code><br/>
+            <strong>Default credentials:</strong><br/>
+            Email: <code className="bg-white px-2 py-1 rounded">admin@fastfood.com</code><br/>
             Password: <code className="bg-white px-2 py-1 rounded">admin123</code>
           </p>
         </div>

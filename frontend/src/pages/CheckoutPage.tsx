@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { useCartStore } from '../store/cartStore';
+import { api } from '../utils/api';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -21,18 +22,33 @@ const CheckoutPage = () => {
     setLoading(true);
 
     try {
-      // API call to backend
-      const response = await fetch('http://localhost:5000/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items: cartItems,
-          totalAmount: getTotalPrice(),
-          customerInfo: formData
-        })
-      });
+      // Get Telegram user info if available
+      let telegramInfo = null;
+      if (window.Telegram?.WebApp) {
+        const user = window.Telegram.WebApp.initDataUnsafe?.user;
+        if (user) {
+          telegramInfo = {
+            telegramId: user.id,
+            username: user.username
+          };
+        }
+      }
 
-      if (response.ok) {
+      // Create order via API
+      const orderData = {
+        items: cartItems,
+        totalAmount: getTotalPrice(),
+        customerInfo: {
+          ...formData,
+          ...telegramInfo
+        },
+        paymentMethod: formData.paymentMethod,
+        comment: formData.comment
+      };
+
+      const response = await api.createOrder(orderData);
+
+      if (response.success) {
         clearCart();
         
         // Show success message using Telegram
@@ -41,11 +57,17 @@ const CheckoutPage = () => {
         }
         
         navigate('/order-success');
+      } else {
+        throw new Error(response.message || 'Buyurtma yaratilmadi');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Order error:', error);
+      
+      // Show error message
       if (window.Telegram?.WebApp) {
-        window.Telegram.WebApp.showAlert('Xatolik yuz berdi. Iltimos qaytadan urinib ko\'ring.');
+        window.Telegram.WebApp.showAlert(error.message || 'Xatolik yuz berdi. Iltimos qaytadan urinib ko\'ring.');
+      } else {
+        alert(error.message || 'Xatolik yuz berdi!');
       }
     } finally {
       setLoading(false);

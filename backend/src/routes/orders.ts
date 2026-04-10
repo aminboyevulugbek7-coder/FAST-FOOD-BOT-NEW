@@ -1,135 +1,170 @@
 import { Router, Request, Response } from 'express';
-import { Order } from '../models/Order';
+import { body, validationResult } from 'express-validator';
+import { orderService, OrderStatus } from '../services/order.service';
+import { authMiddleware } from '../middleware/auth.middleware';
+import { logger } from '../utils/logger.util';
 
 const router = Router();
 
-// Create new order
-router.post('/', async (req: Request, res: Response) => {
-  try {
-    const { items, totalAmount, customerInfo, paymentMethod, comment } = req.body;
+/**
+ * POST /api/orders
+ * Create new order (public - from customer app)
+ */
+router.post(
+  '/',
+  [
+    body('items').isArray({ min: 1 }).withMessage('Order must contain at least one item'),
+    body('items.*.productId').notEmpty().withMessage('Product ID is required'),
+    body('items.*.quantity').isInt({ min: 1 }).withMessage('Quantity must be at least 1'),
+    body('customerInfo.name').notEmpty().withMessage('Customer name is required'),
+    body('customerInfo.phone').notEmpty().withMessage('Customer phone is required'),
+    body('customerInfo.address').notEmpty().withMessage('Customer address is required'),
+    body('paymentMethod').isIn(['cash', 'card', 'online']).withMessage('Invalid payment method')
+  ],
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        res.status(400).json({
+          success: false,
+          message: 'Validation failed',
+          errors: errors.array()
+        });
+        return;
+      }
 
-    // Validate required fields
-    if (!items || items.length === 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Buyurtmalar bo\'sh bo\'lishi mumkin emas' 
+      const order = await orderService.createOrder(req.body);
+
+      res.status(201).json({
+        success: true,
+        message: 'Order created successfully',
+        data: order
       });
-    }
-
-    if (!customerInfo?.name || !customerInfo?.phone || !customerInfo?.address) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Iltimos, barcha ma\'lumotlarni kiriting' 
-      });
-    }
-
-    // Create order
-    const order = await Order.create({
-      items,
-      totalAmount,
-      customerInfo,
-      paymentMethod: paymentMethod || 'card',
-      comment: comment || '',
-      status: 'pending'
-    });
-
-    console.log('✅ New order created:', order._id);
-
-    res.status(201).json({
-      success: true,
-      message: 'Buyurtma muvaffaqiyatli yaratildi',
-      data: order
-    });
-  } catch (error: any) {
-    console.error('❌ Error creating order:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Buyurtma yaratishda xatolik yuz berdi'
-    });
-  }
-});
-
-// Get all orders (for admin)
-router.get('/', async (req: Request, res: Response) => {
-  try {
-    const orders = await Order.find().sort({ createdAt: -1 });
-    
-    res.json({
-      success: true,
-      data: orders
-    });
-  } catch (error: any) {
-    console.error('❌ Error fetching orders:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
-});
-
-// Get order by ID
-router.get('/:id', async (req: Request, res: Response) => {
-  try {
-    const order = await Order.findById(req.params.id);
-    
-    if (!order) {
-      return res.status(404).json({
+    } catch (error: any) {
+      logger.error('❌ Create order route error:', error);
+      res.status(400).json({
         success: false,
-        message: 'Buyurtma topilmadi'
+        message: error.message || 'Failed to create order'
       });
     }
-
-    res.json({
-      success: true,
-      data: order
-    });
-  } catch (error: any) {
-    console.error('❌ Error fetching order:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
   }
-});
+);
 
-// Update order status
-router.patch('/:id/status', async (req: Request, res: Response) => {
-  try {
-    const { status } = req.body;
-    
-    const validStatuses = ['pending', 'confirmed', 'preparing', 'delivering', 'delivered', 'cancelled'];
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({
+/**
+ * GET /api/orders
+ * Get all orders with filters (protected)
+ */
+router.get(
+  '/',
+  authMiddleware,
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const status = req.query.status as OrderStatus | undefined;
+      const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined;
+      const endDate = req.query.endDate ? new Date(req.query.endDate as string) : undefined;
+      const search = req.query.search as string | undefined;
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
+
+      const result = await orderService.getOrders({
+        status,
+        startDate,
+        endDate,
+        search,
+        page,
+        limit
+      });
+
+      res.status(200).json({
+        success: true,
+        data: result
+      });
+    } catch (error) {
+      logger.error('❌ Get orders route error:', error);
+      res.status(500).json({
         success: false,
-        message: 'Noto\'g\'ri status'
+        message: 'Failed to fetch orders'
       });
     }
-
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
-
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: 'Buyurtma topilmadi'
-      });
-    }
-
-    res.json({
-      success: true,
-      message: 'Status o\'zgartirildi',
-      data: order
-    });
-  } catch (error: any) {
-    console.error('❌ Error updating order status:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
   }
-});
+);
+
+/**
+ * GET /api/orders/:id
+ * Get order by ID (protected)
+ */
+router.get(
+  '/:id',
+  authMiddleware,
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const order = await orderService.getOrderById(id);
+
+      if (!order) {
+        res.status(404).json({
+          success: false,
+          message: 'Order not found'
+        });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        data: order
+      });
+    } catch (error) {
+      logger.error('❌ Get order by ID route error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch order'
+      });
+    }
+  }
+);
+
+/**
+ * PATCH /api/orders/:id/status
+ * Update order status (protected)
+ */
+router.patch(
+  '/:id/status',
+  authMiddleware,
+  [
+    body('status').isIn(['pending', 'confirmed', 'preparing', 'delivering', 'completed', 'cancelled']).withMessage('Invalid status'),
+    body('note').optional().isString().withMessage('Note must be a string')
+  ],
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        res.status(400).json({
+          success: false,
+          message: 'Validation failed',
+          errors: errors.array()
+        });
+        return;
+      }
+
+      const { id } = req.params;
+      const { status, note } = req.body;
+      const updatedBy = req.admin?.id;
+
+      const order = await orderService.updateOrderStatus(id, status, note, updatedBy);
+
+      res.status(200).json({
+        success: true,
+        message: 'Order status updated successfully',
+        data: order
+      });
+    } catch (error: any) {
+      logger.error('❌ Update order status route error:', error);
+      res.status(400).json({
+        success: false,
+        message: error.message || 'Failed to update order status'
+      });
+    }
+  }
+);
 
 export default router;

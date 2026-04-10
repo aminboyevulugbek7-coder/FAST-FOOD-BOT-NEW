@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            background: #FF6B35;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #ff5722;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔐 Admin Login Test</h1>
+    <p>Bu sahifa admin login API ni test qiladi.</p>
+    
+    <div>
+        <p><strong>Email:</strong> admin@fastfood.com</p>
+        <p><strong>Password:</strong> admin123</p>
+        <p><strong>API URL:</strong> http://localhost:5001/api/auth/login</p>
+    </div>
+    
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="clearStorage()" style="background: #dc3545; margin-left: 10px;">Clear LocalStorage</button>
+    <button onclick="checkStorage()" style="background: #6c757d; margin-left: 10px;">Check Storage</button>
+    
+    <div id="result"></div>
+
+    <script>
+        async function testLogin() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = 'Testing...';
+            resultDiv.className = '';
+            
+            try {
+                const response = await fetch('http://localhost:5001/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@fastfood.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    resultDiv.className = 'success';
+                    resultDiv.textContent = '✅ LOGIN MUVAFFAQIYATLI!\n\n' + JSON.stringify(data, null, 2);
+                } else {
+                    resultDiv.className = 'error';
+                    resultDiv.textContent = '❌ LOGIN XATO!\n\n' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.textContent = '❌ NETWORK XATO!\n\n' + error.message + '\n\nBackend ishlamayotgan bo\'lishi mumkin.';
+            }
+        }
+
+        function clearStorage() {
+            localStorage.clear();
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'success';
+            resultDiv.textContent = '✅ LocalStorage tozalandi!';
+        }
+
+        function checkStorage() {
+            const token = localStorage.getItem('admin_token');
+            const user = localStorage.getItem('admin_user');
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = '';
+            resultDiv.textContent = 
+                'LocalStorage ma\'lumotlari:\n\n' +
+                'admin_token: ' + (token ? token.substring(0, 50) + '...' : 'null') + '\n\n' +
+                'admin_user: ' + (user || 'null');
+        }
+    </script>
+</body>
+</html>

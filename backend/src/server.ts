@@ -2,8 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import orderRoutes from './routes/orders';
+import authRoutes from './routes/auth';
+import uploadRoutes from './routes/upload';
+import bannerRoutes from './routes/banners';
+import categoryRoutes from './routes/categories';
 import productRoutes from './routes/products';
+import orderRoutes from './routes/orders';
+import analyticsRoutes from './routes/analytics';
 import { startBot } from './bot/bot';
 import { logger } from './utils/logger.util';
 
@@ -18,8 +23,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/orders', orderRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/upload', uploadRoutes);
+app.use('/api/banners', bannerRoutes);
+app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

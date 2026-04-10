@@ -12,8 +12,10 @@ const Layout = ({ children }: LayoutProps) => {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/orders', label: 'Buyurtmalar', icon: '📋' },
+    { path: '/banners', label: 'Bannerlar', icon: '📢' },
+    { path: '/categories', label: 'Kategoriyalar', icon: '📂' },
     { path: '/products', label: 'Mahsulotlar', icon: '🍔' },
+    { path: '/orders', label: 'Buyurtmalar', icon: '📋' },
     { path: '/analytics', label: 'Analitika', icon: '📈' },
   ];
 

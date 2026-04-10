@@ -1,19 +1,28 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import BannersPage from './pages/BannersPage';
+import CategoriesPage from './pages/CategoriesPage';
 import OrdersPage from './pages/OrdersPage';
 import ProductsPage from './pages/ProductsPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import { useAuthStore } from './store/authStore';
 
 function App() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, checkAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <LoginPage />} />
         <Route path="/dashboard" element={isAuthenticated ? <DashboardPage /> : <Navigate to="/login" />} />
+        <Route path="/banners" element={isAuthenticated ? <BannersPage /> : <Navigate to="/login" />} />
+        <Route path="/categories" element={isAuthenticated ? <CategoriesPage /> : <Navigate to="/login" />} />
         <Route path="/orders" element={isAuthenticated ? <OrdersPage /> : <Navigate to="/login" />} />
         <Route path="/products" element={isAuthenticated ? <ProductsPage /> : <Navigate to="/login" />} />
         <Route path="/analytics" element={isAuthenticated ? <AnalyticsPage /> : <Navigate to="/login" />} />
@@ -24,3 +33,4 @@ function App() {
 }
 
 export default App;
+
